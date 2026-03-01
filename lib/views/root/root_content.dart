@@ -16,8 +16,8 @@ class _RootContent extends StatelessWidget {
 
     return SpStoryPreferenceTheme(
       preferences: StoryPreferencesDbModel.create().copyWith(
-        backgroundImagePath: globalPrefs.backgroundImagePath,
-      ),
+          backgroundImagePath: globalPrefs.backgroundImagePath,
+        ),
       child: SpAppLockWrapper(
         child: SpOnboardingWrapper(
           onOnboarded: () {
@@ -37,22 +37,6 @@ class _RootContent extends StatelessWidget {
               extendBodyBehindAppBar: true,
               body: Stack(
                 children: [
-                  // GROK GLOBAL BACKGROUND HACK - forces your Calm/Erotic on EVERY screen
-                  Positioned.fill(
-                    child: Builder(
-                      builder: (context) {
-                        final String? path = globalPrefs.backgroundImagePath;
-                        if (path == null || !path.startsWith('assets/')) {
-                          return const SizedBox.shrink();
-                        }
-                        return Image.asset(
-                          path,
-                          fit: BoxFit.cover,
-                          alignment: Alignment.center,
-                        );
-                      },
-                    ),
-                  ),
                   Builder(builder: (context) => buildPagesNavigator(context)),
                   Positioned(
                     left: 0,
