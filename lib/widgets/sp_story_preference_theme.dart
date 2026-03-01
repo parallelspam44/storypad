@@ -75,35 +75,58 @@ class _SpStoryPreferenceThemeState extends State<SpStoryPreferenceTheme> {
     );
   }
 
-  Widget buildImageBackground(SpStoryPreferenceThemeConstructor themeConstructor) {
-    if (themeConstructor.selectedBackground != null) {
-      return Positioned.fill(
-        child: SpFirestoreStorageDownloaderBuilder(
-          key: ValueKey(themeConstructor.selectedBackground!.path),
-          filePath: themeConstructor.selectedBackground!.path,
-          builder: (context, file, failed) {
-            if (file == null) return const SizedBox.shrink();
+      Widget buildImageBackground(SpStoryPreferenceThemeConstructor themeConstructor) {
+        final String? bgPath = widget.preferences?.backgroundImagePath;
 
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                return Image.file(
-                  file,
-                  fit: .cover,
-                  alignment: switch (themeConstructor.selectedBackground!.align) {
-                    .left => .centerLeft,
-                    .center => .center,
-                    .right => .centerRight,
+        if (bgPath == null || bgPath.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        // GROK FINAL BULLETPROOF FIX - handles basename OR full path (calm + erotic)
+        final bool isLocalCustom = bgPath.startsWith('assets/') ||
+                                  !StoryBackgrounds.byFilename.containsKey(bgPath) ||
+                                  !bgPath.contains('/');   // basename only (no slash)
+
+        if (isLocalCustom) {
+          return Positioned.fill(
+            child: Image.asset(
+              bgPath.startsWith('assets/')
+                  ? bgPath
+                  : 'assets/backgrounds/calm/$bgPath',   // try calm first
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  'assets/backgrounds/erotic/$bgPath',   // fallback to erotic
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center,
+                  errorBuilder: (context, error, stackTrace) {
+                    debugPrint('Custom background failed for both folders: $bgPath');
+                    return const SizedBox.shrink();
                   },
                 );
               },
-            );
-          },
-        ),
-      );
-    } else {
-      return const SizedBox.shrink();
-    }
-  }
+            ),
+          );
+        }
+
+        // ONLY original cloud backgrounds use downloader
+        return Positioned.fill(
+          child: SpFirestoreStorageDownloaderBuilder(
+            key: ValueKey(bgPath),
+            filePath: bgPath,
+            builder: (context, file, failed) {
+              if (failed || file == null) return const SizedBox.shrink();
+
+              return Image.file(
+                file,
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+              );
+            },
+          ),
+        );
+      }
 }
 
 class SpStoryPreferenceThemeConstructor {

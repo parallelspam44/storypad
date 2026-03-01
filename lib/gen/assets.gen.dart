@@ -121,6 +121,16 @@ class $TranslationsGen {
   ];
 }
 
+class $AssetsBackgroundsGen {
+  const $AssetsBackgroundsGen();
+
+  /// Directory path: assets/backgrounds/calm
+  $AssetsBackgroundsCalmGen get calm => const $AssetsBackgroundsCalmGen();
+
+  /// Directory path: assets/backgrounds/erotic
+  $AssetsBackgroundsEroticGen get erotic => const $AssetsBackgroundsEroticGen();
+}
+
 class $AssetsEmoji64Gen {
   const $AssetsEmoji64Gen();
 
@@ -451,6 +461,48 @@ class $AssetsLogosGen {
       const $AssetsLogosStorypadLogo61IconGen();
 }
 
+class $AssetsBackgroundsCalmGen {
+  const $AssetsBackgroundsCalmGen();
+
+  /// File path: assets/backgrounds/calm/candles.jpg
+  AssetGenImage get candles =>
+      const AssetGenImage('assets/backgrounds/calm/candles.jpg');
+
+  /// File path: assets/backgrounds/calm/grass.jpg
+  AssetGenImage get grass =>
+      const AssetGenImage('assets/backgrounds/calm/grass.jpg');
+
+  /// File path: assets/backgrounds/calm/stones.jpg
+  AssetGenImage get stones =>
+      const AssetGenImage('assets/backgrounds/calm/stones.jpg');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [candles, grass, stones];
+}
+
+class $AssetsBackgroundsEroticGen {
+  const $AssetsBackgroundsEroticGen();
+
+  /// File path: assets/backgrounds/erotic/erotic.jpg
+  AssetGenImage get erotic =>
+      const AssetGenImage('assets/backgrounds/erotic/erotic.jpg');
+
+  /// File path: assets/backgrounds/erotic/erotic3.jpg
+  AssetGenImage get erotic3 =>
+      const AssetGenImage('assets/backgrounds/erotic/erotic3.jpg');
+
+  /// File path: assets/backgrounds/erotic/erotic4.jpg
+  AssetGenImage get erotic4 =>
+      const AssetGenImage('assets/backgrounds/erotic/erotic4.jpg');
+
+  /// File path: assets/backgrounds/erotic/royalgirl.jpg
+  AssetGenImage get royalgirl =>
+      const AssetGenImage('assets/backgrounds/erotic/royalgirl.jpg');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [erotic, erotic3, erotic4, royalgirl];
+}
+
 class $AssetsImagesOnboardingGen {
   const $AssetsImagesOnboardingGen();
 
@@ -682,6 +734,7 @@ class $AssetsLogosStorypadLogo61IconAssetsGen {
 class Assets {
   const Assets._();
 
+  static const $AssetsBackgroundsGen backgrounds = $AssetsBackgroundsGen();
   static const $AssetsEmoji64Gen emoji64 = $AssetsEmoji64Gen();
   static const String firestoreStorageMap = 'assets/firestore_storage_map.json';
   static const $AssetsImagesGen images = $AssetsImagesGen();

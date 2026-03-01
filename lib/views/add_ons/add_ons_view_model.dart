@@ -16,6 +16,8 @@ import 'package:storypad/views/relax_sounds/relax_sounds_view.dart';
 import 'package:storypad/views/templates/templates_view.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'add_ons_view.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/widgets/sp_background_picker.dart';
 
 class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
   final AddOnsRoute params;
@@ -66,23 +68,48 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
     await context.read<InAppPurchaseProvider>().fetchAndCacheProducts(debugSource: '$runtimeType#load');
 
     addOns = [
-      AddOnObject(
-        type: AppProduct.backgrounds,
-        title: tr('add_ons.backgrounds.title'),
-        subtitle: tr('add_ons.backgrounds.subtitle'),
-        displayPrice: getActiveDeal(AppProduct.backgrounds).displayPrice,
-        displayComparePrice: getActiveDeal(AppProduct.backgrounds).displayComparePrice,
-        badgeLabel: getActiveDeal(AppProduct.backgrounds).badgeLabel,
-        iconData: SpIcons.theme,
-        weekdayColor: 2,
-        demoImages: [
-          '/add_ons_demos/backgrounds/backgrounds_1.jpg',
-          '/add_ons_demos/backgrounds/backgrounds_2.jpg',
-        ],
-        onTry: null,
-        onPurchased: null,
-        onOpen: null,
-      ),
+          AddOnObject(
+            type: AppProduct.backgrounds,
+            title: tr('add_ons.backgrounds.title'),
+            subtitle: tr('add_ons.backgrounds.subtitle'),
+            displayPrice: getActiveDeal(AppProduct.backgrounds).displayPrice,
+            displayComparePrice: getActiveDeal(AppProduct.backgrounds).displayComparePrice,
+            badgeLabel: getActiveDeal(AppProduct.backgrounds).badgeLabel,
+            iconData: SpIcons.theme,
+            weekdayColor: 2,
+            demoImages: [
+              'assets/backgrounds/calm/candles.jpg',
+              'assets/backgrounds/calm/grass.jpg',
+              'assets/backgrounds/calm/stones.jpg',
+              'assets/backgrounds/erotic/erotic.jpg',
+              'assets/backgrounds/erotic/royalgirl.jpg',
+              'assets/backgrounds/erotic/erotic3.jpg',
+              'assets/backgrounds/erotic/erotic4.jpg',
+            ],
+            onTry: null,
+            onPurchased: null,
+            onOpen: (BuildContext context) async {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) => Container(
+                  height: MediaQuery.of(context).size.height * 0.85,
+                  child: SpBackgroundPicker(
+                    colorSeedValue: null,
+                    colorTone: null,
+                    backgroundImagePath: null,
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    onThemeChanged: ({int? colorSeedValue, int? colorTone, String? backgroundImagePath}) {
+                      if (backgroundImagePath != null) {
+                        context.read<DevicePreferencesProvider>().setBackgroundImagePath(backgroundImagePath);
+                      }
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
       AddOnObject(
         type: AppProduct.voice_journal,
         title: tr('add_ons.voice_journal.title'),

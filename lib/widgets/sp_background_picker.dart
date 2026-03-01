@@ -18,6 +18,7 @@ import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_firestore_storage_downloader_builder.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_story_preference_theme.dart';
+import 'package:path/path.dart' show basename;
 
 const double _backgroundCardHeight = 123;
 const double _backgroundCardAspectRatio = 2 / 2.5;
@@ -63,6 +64,8 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
     'dailylife': tr('general.background_group.dailylife'),
     'garden': tr('general.background_group.garden'),
     'scenery': tr('general.background_group.scenery'),
+    'calm': 'Calm',
+    'erotic': 'Erotic',
   };
 
   @override
@@ -126,6 +129,14 @@ class _SpBackgroundPickerState extends State<SpBackgroundPicker> with Debounched
             onThemeChanged: widget.onThemeChanged,
           ),
         ],
+        if (['calm', 'erotic'].contains(selectedGroup)) ...[
+                  const SizedBox(height: 8),
+                  _CustomLocalBackgroundCarousel(
+                    groupName: selectedGroup,
+                    backgroundImagePath: backgroundImagePath,
+                    onThemeChanged: widget.onThemeChanged,
+                  ),
+                ],
       ],
     );
   }
@@ -358,7 +369,7 @@ class _ImageItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        buildImage(),
+        buildImage(context),
         if (selected) buildSelectedCheck(),
         if (locked) ...[
           Positioned.fill(
@@ -375,11 +386,30 @@ class _ImageItem extends StatelessWidget {
     );
   }
 
-  Positioned buildImage() {
+  Positioned buildImage(BuildContext context) {
     return Positioned.fill(
       child: AspectRatio(
         aspectRatio: 2 / 2.5,
-        child: SpFirestoreStorageDownloaderBuilder(
+        child: background.path.startsWith('assets/')
+            ? Image.asset(
+                background.path,
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.low,
+                alignment: switch (background.align) {
+                    StoryBackgroundAlign.left => Alignment.centerLeft,
+                    StoryBackgroundAlign.center => Alignment.center,
+                    StoryBackgroundAlign.right => Alignment.centerRight,
+                },
+                cacheWidth: (itemWidth * 3 * MediaQuery.of(context).devicePixelRatio).round(),
+                errorBuilder: (context, error, stackTrace) {
+                    debugPrint('Error Loading Asset: ${background.path}, error: $error');
+                    return Container(
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.broken_image),
+                    );
+                },
+            )
+        : SpFirestoreStorageDownloaderBuilder(
           filePath: background.path,
           builder: (context, file, failed) {
             if (failed || file == null) return const SizedBox.shrink();
@@ -615,6 +645,130 @@ class _ColorBackgroundsCarouselState extends State<_ColorBackgroundsCarousel> {
           ),
         ),
       ),
+    );
+  }
+}
+
+// GROK PATCH - custom local backgrounds (calm + erotic) - no cloud, no paywall
+class _CustomLocalBackgroundCarousel extends StatefulWidget {
+  const _CustomLocalBackgroundCarousel({
+    super.key,
+    required this.groupName,
+    required this.backgroundImagePath,
+    required this.onThemeChanged,
+  });
+
+  final String groupName;
+  final String? backgroundImagePath;
+  final OnBackgroundThemeChanged onThemeChanged;
+
+  @override
+  State<_CustomLocalBackgroundCarousel> createState() => _CustomLocalBackgroundCarouselState();
+}
+
+class _CustomLocalBackgroundCarouselState extends State<_CustomLocalBackgroundCarousel> {
+  late final CarouselController controller;
+
+  // ←←← FILL YOUR FILENAMES HERE (add as many as you have)
+  final Map<String, List<String>> customImages = {
+    'calm': [
+      'assets/backgrounds/calm/candles.jpg',
+      'assets/backgrounds/calm/grass.jpg',
+      'assets/backgrounds/calm/stones.jpg',
+      // add all your calm images here
+    ],
+    'erotic': [
+      'assets/backgrounds/erotic/erotic.jpg',
+      'assets/backgrounds/erotic/royalgirl.jpg',
+      'assets/backgrounds/erotic/erotic3.jpg',
+      'assets/backgrounds/erotic/erotic4.jpg',
+      // add all your erotic images here
+    ],
+  };
+
+  List<String> get currentImages => customImages[widget.groupName] ?? [];
+
+  @override
+  void initState() {
+    controller = CarouselController();
+    super.initState();
+  }
+
+    bool isSelected(String path) => widget.backgroundImagePath == path;
+
+  @override
+  Widget build(BuildContext context) {
+    final images = currentImages;
+    if (images.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      height: _backgroundCardHeight,
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+      clipBehavior: Clip.hardEdge,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(9.0)),
+      child: CarouselView(
+        controller: controller,
+        itemExtent: _backgroundCardHeight * _backgroundCardAspectRatio,
+        padding: const EdgeInsets.symmetric(horizontal: 6.0),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Theme.of(context).dividerColor, width: 1.0),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        onTap: (index) {
+                  HapticFeedback.selectionClick();
+                  final path = images[index];
+                  widget.onThemeChanged(
+                    colorTone: null,
+                    colorSeedValue: null,
+                    backgroundImagePath: path,   // full path (no basename, no null)
+                  );
+                },
+        children: List.generate(images.length, (index) {
+          final path = images[index];
+          return _LocalImageItem(
+            path: path,
+            selected: isSelected(path),
+            itemWidth: _backgroundCardHeight * _backgroundCardAspectRatio - 12,
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class _LocalImageItem extends StatelessWidget {
+  const _LocalImageItem({
+    required this.path,
+    required this.selected,
+    required this.itemWidth,
+  });
+
+  final String path;
+  final bool selected;
+  final double itemWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        AspectRatio(
+          aspectRatio: 2 / 2.5,
+          child: Image.asset(
+            path,
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.low,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(color: Colors.grey[300], child: const Icon(Icons.broken_image));
+            },
+          ),
+        ),
+        if (selected)
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Icon(SpIcons.checkCircle, color: Colors.white.withValues(alpha: 0.7)),
+          ),
+      ],
     );
   }
 }

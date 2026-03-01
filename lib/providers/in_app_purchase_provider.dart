@@ -21,18 +21,18 @@ import 'package:storypad/widgets/bottom_sheets/sp_connect_with_google_drive_shee
 // Only this hashed identifier is stored in RevenueCat and Firebase - your real email never leaves your device.
 // This design ensures strong privacy protection while enabling purchase restoration and cross-device support.
 class InAppPurchaseProvider extends ChangeNotifier {
-  bool isActive(String productIdentifier) => _customerInfo?.entitlements.all[productIdentifier]?.isActive == true;
+  bool isActive(String productIdentifier) => true;
 
   // Some feature unlocked base on credits.
   int get purchaseCount => AppProduct.values.where((product) => isActive(product.productIdentifier)).length;
 
   // Add-on features.
-  bool get backgrounds => isActive(AppProduct.backgrounds.productIdentifier);
-  bool get voiceJournal => isActive(AppProduct.voice_journal.productIdentifier);
-  bool get relaxSound => isActive(AppProduct.relax_sounds.productIdentifier);
-  bool get template => isActive(AppProduct.templates.productIdentifier);
-  bool get periodCalendar => isActive(AppProduct.period_calendar.productIdentifier);
-  bool get markdownExport => isActive(AppProduct.markdown_export.productIdentifier);
+  bool get backgrounds    => true;
+    bool get voiceJournal   => true;
+    bool get relaxSound     => true;
+    bool get template       => true;
+    bool get periodCalendar => true;
+    bool get markdownExport => true;
 
   // Reward features.
   bool get writingStats => currentReward.includedRewardedFeatures.contains(RewardFeature.writing_stats);
@@ -148,43 +148,43 @@ class InAppPurchaseProvider extends ChangeNotifier {
     BuildContext context,
     String productIdentifier,
     Future<void> Function()? onPurchased,
-  ) async {
-    if (!kIAPEnabled) return false;
-
-    await _loginIfNot(context);
-
-    if (_customerInfo == null) return false;
-    if (isActive(productIdentifier)) return false;
-    if (!context.mounted) return false;
-
-    await MessengerService.of(context).showLoading(
-      debugSource: '$runtimeType#_loginIfNot',
-      future: () async {
-        StoreProduct? storeProduct = await Purchases.getProducts(
-          [productIdentifier],
-          productCategory: ProductCategory.nonSubscription,
-        ).then((e) => e.firstOrNull);
-
-        if (storeProduct != null) {
-          try {
-            PurchaseResult result = await Purchases.purchase(PurchaseParams.storeProduct(storeProduct));
-            _customerInfo = result.customerInfo;
-            if (isActive(productIdentifier)) await onPurchased?.call();
-            notifyListeners();
-          } on PlatformException catch (e, s) {
-            PurchasesErrorCode errorCode = PurchasesErrorHelper.getErrorCode(e);
-            AppLogger.error('$runtimeType#purchase error: $errorCode', stackTrace: s);
-          }
-        }
-      },
-    );
-
-    if (isActive(productIdentifier)) {
-      if (context.mounted) await MessengerService.of(context).showSuccess();
-      return true;
-    }
-
-    return false;
+   ) async {
+//     if (!kIAPEnabled) return false;
+//
+//     await _loginIfNot(context);
+//
+//     if (_customerInfo == null) return false;
+//     if (isActive(productIdentifier)) return false;
+//     if (!context.mounted) return false;
+//
+//     await MessengerService.of(context).showLoading(
+//       debugSource: '$runtimeType#_loginIfNot',
+//       future: () async {
+//         StoreProduct? storeProduct = await Purchases.getProducts(
+//           [productIdentifier],
+//           productCategory: ProductCategory.nonSubscription,
+//         ).then((e) => e.firstOrNull);
+//
+//         if (storeProduct != null) {
+//           try {
+//             PurchaseResult result = await Purchases.purchase(PurchaseParams.storeProduct(storeProduct));
+//             _customerInfo = result.customerInfo;
+//             if (isActive(productIdentifier)) await onPurchased?.call();
+//             notifyListeners();
+//           } on PlatformException catch (e, s) {
+//             PurchasesErrorCode errorCode = PurchasesErrorHelper.getErrorCode(e);
+//             AppLogger.error('$runtimeType#purchase error: $errorCode', stackTrace: s);
+//           }
+//         }
+//       },
+//     );
+//
+//     if (isActive(productIdentifier)) {
+//       if (context.mounted) await MessengerService.of(context).showSuccess();
+//       return true;
+//     }
+//
+     return true;
   }
 
   // Restore purchase handle like a refresh.

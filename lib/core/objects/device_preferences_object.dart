@@ -18,6 +18,7 @@ class DevicePreferencesObject {
   @JsonKey(name: 'theme_mode')
   final ThemeMode? _themeMode;
   final int? colorSeedValue;
+  final String? backgroundImagePath;
 
   @JsonKey(name: 'voice_playback_speed')
   final double? _voicePlaybackSpeed;
@@ -42,15 +43,18 @@ class DevicePreferencesObject {
     ThemeMode? themeMode,
     TimeFormatOption? timeFormat,
     this.colorSeedValue,
+    this.backgroundImagePath,
     double? voicePlaybackSpeed,
   }) : _fontFamily = fontFamily,
        _themeMode = themeMode,
        _timeFormat = timeFormat,
        _voicePlaybackSpeed = voicePlaybackSpeed;
 
-  factory DevicePreferencesObject.initial() {
-    return DevicePreferencesObject();
-  }
+   factory DevicePreferencesObject.initial() {
+     return DevicePreferencesObject(
+       backgroundImagePath: null,
+     );
+   }
 
   Map<String, dynamic> toJson() => _$DevicePreferencesObjectToJson(this);
   factory DevicePreferencesObject.fromJson(Map<String, dynamic> json) => _$DevicePreferencesObjectFromJson(json);

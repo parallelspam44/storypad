@@ -19,7 +19,7 @@ const String kDefaultFontFamily = 'Quicksand';
 const FontWeight kDefaultFontWeight = FontWeight.normal;
 const FontWeight kTitleDefaultFontWeight = FontWeight.w500;
 
-final bool kIAPEnabled =
+final bool kIAPEnabled = kCommunity ? true: // Always enabled for community
     (Platform.isAndroid && kRevenueCatAndroidApiKey.trim().isNotEmpty) ||
     (Platform.isIOS && kRevenueCatIosApiKey.trim().isNotEmpty);
 

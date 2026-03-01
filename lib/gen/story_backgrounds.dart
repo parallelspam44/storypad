@@ -536,11 +536,60 @@ class StoryBackgrounds {
     ),
   ];
 
+static const calm =[
+    StoryBackground(
+        name: '001',
+        path: 'assets/backgrounds/calm/candles.jpg',
+        align: .right,
+        textColor: .black,
+    ),
+    StoryBackground(
+            name: '002',
+            path: 'assets/backgrounds/calm/grass.jpg',
+            align: .right,
+            textColor: .black,
+        ),
+    StoryBackground(
+            name: '003',
+            path: 'assets/backgrounds/calm/stones.jpg',
+            align: .right,
+            textColor: .black,
+        ),
+ ];
+ static const erotic = [
+     StoryBackground(
+         name: '001',
+         path: 'assets/backgrounds/erotic/erotic.jpg',
+         align: .right,
+         textColor: .black,
+     ),
+     StoryBackground(
+             name: '002',
+             path: 'assets/backgrounds/erotic/royalgirl.jpg',
+             align: .right,
+             textColor: .black,
+         ),
+     StoryBackground(
+             name: '003',
+             path: 'assets/backgrounds/erotic/erotic3.jpg',
+             align: .right,
+             textColor: .black,
+         ),
+
+     StoryBackground(
+             name: '004',
+             path: 'assets/backgrounds/erotic/erotic4.jpg',
+             align: .right,
+             textColor: .black,
+         ),
+  ];
   static const all = <String, List<StoryBackground>>{
     'dailylife': dailylife,
     'garden': garden,
     'cute': cute,
     'scenery': scenery,
+    'calm': calm,
+    'erotic': erotic,
   };
 
   static final byFilename = <String, StoryBackground>{
@@ -677,6 +726,20 @@ class StoryBackgrounds {
         scenery[5],
     'scenery__cartoon-of-spring-summer-beautiful-scene-scenic-blue-lake-and-sunrise-over-mountains__align-left__text-white.jpg':
         scenery[6],
+    'candles.jpg':
+        calm[0],
+    'grass.jpg':
+        calm[1],
+    'stones.jpg':
+        calm[2],
+    'erotic.jpg':
+        erotic[0],
+    'royalgirl.jpg':
+        erotic[1],
+    'erotic3.jpg':
+        erotic[2],
+    'erotic4.jpg':
+        erotic[3],
   };
 
   static const groups = [
@@ -684,5 +747,7 @@ class StoryBackgrounds {
     'garden',
     'cute',
     'scenery',
+    'calm',
+    'erotic',
   ];
 }

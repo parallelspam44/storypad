@@ -64,7 +64,7 @@ class SideItems {
         selectedIconData: SpIcons.tag,
         onTap: (context, route) => context.read<RootProvider>().navigate(route),
       ),
-      if (kIAPEnabled)
+      //if (kIAPEnabled)
         IconButtonSideItem(
           route: const RelaxSoundsRoute(),
           title: tr('general.sounds'),
@@ -111,14 +111,14 @@ class SideItems {
         },
       ),
       CustomSideItem.divider(),
-      if (kIAPEnabled)
+      //if (kIAPEnabled)
         ListTileSideItem(
           title: tr('page.add_ons.title'),
           subtitle: null,
           icon: const Icon(SpIcons.addOns),
           onTap: (context) => const AddOnsRoute().push(context),
         ),
-      if (kIAPEnabled)
+      //if (kIAPEnabled)
         ListTileSideItem(
           title: tr('page.rewards.title'),
           subtitle: null,

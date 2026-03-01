@@ -44,7 +44,7 @@ class _HomeTimelineSideBarState extends State<_HomeTimelineSideBar> {
         mainAxisSize: MainAxisSize.min,
         spacing: Platform.isMacOS ? 8.0 : 0.0,
         children: [
-          if (kIAPEnabled && !provider.allRewarded) const _AddOnButton(),
+          const _AddOnButton(),
           if (kIAPEnabled)
             SpFadeIn.bound(
               child: SpFloatingMusicNote.wrapIfPlaying(

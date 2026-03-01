@@ -12,6 +12,9 @@ import 'package:storypad/widgets/side_items/side_items.dart';
 import 'package:storypad/widgets/sp_app_lock_wrapper.dart';
 import 'package:storypad/widgets/sp_onboarding_wrapper.dart';
 import 'package:storypad/widgets/sp_splash_screen_wrapper.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/widgets/sp_story_preference_theme.dart';
+import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 
 import 'root_view_model.dart';
 
@@ -28,20 +31,25 @@ class RootView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<RootViewModel>(
-      create: (context) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          SpSplashScreenWrapper.markAsLoaded(context);
-        });
+    final globalPrefs = context.watch<DevicePreferencesProvider>().preferences;
 
-        return RootViewModel();
-      },
-      builder: (context, viewModel, child) {
-        _rootContext = context;
-
-        final rootProvider = Provider.of<RootProvider>(context);
-        return _RootContent(viewModel, rootProvider);
-      },
+    return SpStoryPreferenceTheme(
+      preferences: StoryPreferencesDbModel.create().copyWith(
+        backgroundImagePath: globalPrefs.backgroundImagePath,
+      ),
+      child: ViewModelProvider<RootViewModel>(
+        create: (context) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            SpSplashScreenWrapper.markAsLoaded(context);
+          });
+          return RootViewModel();
+        },
+        builder: (context, viewModel, child) {
+          _rootContext = context;
+          final rootProvider = Provider.of<RootProvider>(context);
+          return _RootContent(viewModel, rootProvider);
+        },
+      ),
     );
   }
 }

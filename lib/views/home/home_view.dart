@@ -43,6 +43,9 @@ import 'package:storypad/widgets/sp_throwback_tile.dart';
 import 'package:storypad/widgets/story_list/sp_story_list_multi_edit_wrapper.dart';
 import 'package:storypad/widgets/story_list/sp_story_listener_builder.dart';
 import 'package:storypad/widgets/story_list/sp_story_tile_list_item.dart';
+import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/widgets/sp_story_preference_theme.dart';
+import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
 
 import 'home_view_model.dart';
 

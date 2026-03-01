@@ -11,38 +11,57 @@ class _RootContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final globalPrefs = context.watch<DevicePreferencesProvider>().preferences;
     final List<IconButtonSideItem> sideItems = SideItems.getSideMenuItems();
 
-    return SpAppLockWrapper(
-      child: SpOnboardingWrapper(
-        onOnboarded: () {
-          // onboard is considered re-starting experience,
-          // reset to show new badge back.
-          NewBadgeStorage().remove();
-        },
-        child: PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) {
-            if (!SpAppLockWrapper.authenticated(context)) return;
-            if (!didPop) {
-              final NavigatorState? navigator = rootProvider.navigatorKey.currentState;
-              if (navigator?.canPop() ?? false) navigator?.maybePop(result);
-            }
+    return SpStoryPreferenceTheme(
+      preferences: StoryPreferencesDbModel.create().copyWith(
+        backgroundImagePath: globalPrefs.backgroundImagePath,
+      ),
+      child: SpAppLockWrapper(
+        child: SpOnboardingWrapper(
+          onOnboarded: () {
+            NewBadgeStorage().remove();
           },
-          child: Scaffold(
-            extendBody: true,
-            extendBodyBehindAppBar: true,
-            body: Stack(
-              children: [
-                // Use inner of scaffold context instead of root context.
-                Builder(builder: (context) => buildPagesNavigator(context)),
-                Positioned(
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  child: RootSideBar(rootProvider: rootProvider, sideItems: sideItems),
-                ),
-              ],
+          child: PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) {
+              if (!SpAppLockWrapper.authenticated(context)) return;
+              if (!didPop) {
+                final NavigatorState? navigator = rootProvider.navigatorKey.currentState;
+                if (navigator?.canPop() ?? false) navigator?.maybePop(result);
+              }
+            },
+            child: Scaffold(
+              extendBody: true,
+              extendBodyBehindAppBar: true,
+              body: Stack(
+                children: [
+                  // GROK GLOBAL BACKGROUND HACK - forces your Calm/Erotic on EVERY screen
+                  Positioned.fill(
+                    child: Builder(
+                      builder: (context) {
+                        final String? path = globalPrefs.backgroundImagePath;
+                        if (path == null || !path.startsWith('assets/')) {
+                          return const SizedBox.shrink();
+                        }
+                        return Image.asset(
+                          path,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                        );
+                      },
+                    ),
+                  ),
+                  Builder(builder: (context) => buildPagesNavigator(context)),
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    child: RootSideBar(rootProvider: rootProvider, sideItems: sideItems),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -100,9 +119,6 @@ class _RootContent extends StatelessWidget {
     );
   }
 
-  // This is to trigger auto backup when user navigates to home page.
-  // It is not fully accurate as some data can be modified directly on home page,
-  // but it is good enough for most cases. User can still click backup button manually to ensure data is backed up.
   void autoBackupWhenNavigateToHome(Route<dynamic> route, BuildContext context) {
     if (route.settings.name == const HomeRoute().routeName && context.read<InAppPurchaseProvider>().autoBackups) {
       final backupProvider = context.read<BackupProvider>();

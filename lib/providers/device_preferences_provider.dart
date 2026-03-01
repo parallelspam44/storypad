@@ -106,6 +106,12 @@ class DevicePreferencesProvider extends ChangeNotifier with WidgetsBindingObserv
     );
   }
 
+    void setBackgroundImagePath(String? path) {
+      _preferences = _preferences.copyWith(backgroundImagePath: path);
+      storage.writeObject(_preferences);
+      notifyListeners();
+    }
+
   void addListenerForVoicePlaybackSpeed(void Function() listener) {
     _listeners['voice_playback_speed'] ??= [];
     _listeners['voice_playback_speed']!.add(listener);
