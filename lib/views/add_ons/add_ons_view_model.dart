@@ -89,6 +89,7 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
             onTry: null,
             onPurchased: null,
             onOpen: (BuildContext context) async {
+               final currentPath = context.read<DevicePreferencesProvider>().preferences.backgroundImagePath;
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
@@ -97,13 +98,11 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
                   child: SpBackgroundPicker(
                     colorSeedValue: null,
                     colorTone: null,
-                    backgroundImagePath: null,
+                    backgroundImagePath: currentPath,
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     onThemeChanged: ({int? colorSeedValue, int? colorTone, String? backgroundImagePath}) {
-                      if (backgroundImagePath != null) {
                         context.read<DevicePreferencesProvider>().setBackgroundImagePath(backgroundImagePath);
-                      }
-                      Navigator.pop(context);
+                        Navigator.pop(context);
                     },
                   ),
                 ),

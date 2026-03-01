@@ -717,10 +717,11 @@ class _CustomLocalBackgroundCarouselState extends State<_CustomLocalBackgroundCa
         onTap: (index) {
                   HapticFeedback.selectionClick();
                   final path = images[index];
+                  final isAlreadySelected = isSelected(path);
                   widget.onThemeChanged(
                     colorTone: null,
                     colorSeedValue: null,
-                    backgroundImagePath: path,   // full path (no basename, no null)
+                    backgroundImagePath: isAlreadySelected ? null : path,   // full path (no basename, no null)
                   );
                 },
         children: List.generate(images.length, (index) {
