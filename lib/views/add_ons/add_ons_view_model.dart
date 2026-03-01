@@ -104,10 +104,6 @@ class AddOnsViewModel extends ChangeNotifier with DisposeAwareMixin {
                       if (backgroundImagePath != null) {
                         // Save to device preferences
                         context.read<DevicePreferencesProvider>().setBackgroundImagePath(backgroundImagePath);
-
-                        // Also update story preferences so the app theme picks it up immediately
-                        final storyPrefs = context.read<DevicePreferencesProvider>().preferences.toStoryPreferencesDbModel();
-                        context.read<StoryPreferencesProvider>().setPreferences(storyPrefs);
                       }
                       Navigator.pop(context);
                     },

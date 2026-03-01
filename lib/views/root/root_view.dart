@@ -46,7 +46,8 @@ class RootView extends StatelessWidget {
         },
         builder: (context, viewModel, child) {
           _rootContext = context;
-          final rootProvider = Provider.of<RootProvider>(context);
+          final devicePrefs = context.watch<DevicePreferencesProvider>();
+          final rootProvider = context.read<RootProvider>();
           return _RootContent(viewModel, rootProvider);
         },
       ),
