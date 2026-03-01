@@ -11,13 +11,12 @@ class _RootContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final globalPrefs = context.watch<DevicePreferencesProvider>().preferences;
     final List<IconButtonSideItem> sideItems = SideItems.getSideMenuItems();
 
     return SpStoryPreferenceTheme(
       preferences: StoryPreferencesDbModel.create().copyWith(
-          backgroundImagePath: globalPrefs.backgroundImagePath,
-        ),
+        backgroundImagePath: 'assets/backgrounds/calm/candles.jpg', // hardcoded global
+      ),
       child: SpAppLockWrapper(
         child: SpOnboardingWrapper(
           onOnboarded: () {
@@ -37,6 +36,14 @@ class _RootContent extends StatelessWidget {
               extendBodyBehindAppBar: true,
               body: Stack(
                 children: [
+                  // GROK PERMANENT GLOBAL BACKGROUND - candles.jpg on entire app
+                  Positioned.fill(
+                    child: Image.asset(
+                      'assets/backgrounds/calm/candles.jpg',
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                    ),
+                  ),
                   Builder(builder: (context) => buildPagesNavigator(context)),
                   Positioned(
                     left: 0,
