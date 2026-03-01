@@ -13,49 +13,27 @@ class _RootContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<IconButtonSideItem> sideItems = SideItems.getSideMenuItems();
 
-    return SpStoryPreferenceTheme(
-      preferences: StoryPreferencesDbModel.create().copyWith(
-        backgroundImagePath: 'assets/backgrounds/calm/candles.jpg', // hardcoded global
-      ),
-      child: SpAppLockWrapper(
-        child: SpOnboardingWrapper(
-          onOnboarded: () {
-            NewBadgeStorage().remove();
-          },
-          child: PopScope(
-            canPop: false,
-            onPopInvokedWithResult: (didPop, result) {
-              if (!SpAppLockWrapper.authenticated(context)) return;
-              if (!didPop) {
-                final NavigatorState? navigator = rootProvider.navigatorKey.currentState;
-                if (navigator?.canPop() ?? false) navigator?.maybePop(result);
-              }
-            },
-            child: Scaffold(
-              extendBody: true,
-              extendBodyBehindAppBar: true,
-              body: Stack(
-                children: [
-                  // GROK PERMANENT GLOBAL BACKGROUND - candles.jpg on entire app
-                  Positioned.fill(
-                    child: Image.asset(
-                      'assets/backgrounds/calm/candles.jpg',
-                      fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                    ),
-                  ),
-                  Builder(builder: (context) => buildPagesNavigator(context)),
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: RootSideBar(rootProvider: rootProvider, sideItems: sideItems),
-                  ),
-                ],
-              ),
+    return Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      body: Stack(
+        children: [
+          // GROK PERMANENT GLOBAL BACKGROUND - candles.jpg on the ENTIRE app
+          Positioned.fill(
+            child: Image.asset(
+              'assets/backgrounds/calm/candles.jpg',
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
             ),
           ),
-        ),
+          Builder(builder: (context) => buildPagesNavigator(context)),
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: RootSideBar(rootProvider: rootProvider, sideItems: sideItems),
+          ),
+        ],
       ),
     );
   }
